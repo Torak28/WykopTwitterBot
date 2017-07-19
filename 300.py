@@ -1,40 +1,30 @@
 import wykop
-import re
+from bs4 import BeautifulSoup
 
-index = 17
+index = 5
 '''
-    Nie udaje mi sie jak całość nie kończy się #
-    W sensie nie udaje mi się kiedy np. zaczyna się od # albo # jest gdzieś w środku
-    No i maks indeks to 17 nie wiem czemu :c
+    Tym razem używam BeautifulSoup to parsowania html przez co nie ma zabawy znacznikami i regexem. :>
 '''
 
 
-klucz = "klucz"
-sekret = "sekret"
+klucz = "9dFENlI8xb"
+sekret = "UH2uLO4KZH"
 
 api = wykop.WykopAPI(klucz, sekret)
 profile = api.get_stream_hot()
 
 #zmienne:
 TekstWyciagniety = profile[index].body
-Zdjecie = profile[index].embed.url
 
-Tekst = TekstWyciagniety.replace('<br />', '')
-hasz = "#"
-Hasztag = Tekst[Tekst.index(hasz) + len(hasz):]
-TekstPostu = Tekst[:Tekst.index(hasz)]
+Zdjecie = None
+if hasattr(profile[index], "embed"):
+    if hasattr(profile[index].embed, "url"):
+        Zdjecie = profile[index].embed.url
 
-Post = TekstPostu
-
-regex = r"(?<=>)[^\<# ]+"
-
-hasztagi = re.finditer(regex, Hasztag)
-
-for matchNum, match in enumerate(hasztagi):
-    matchNum = matchNum + 1
-    TekstPostu += "#" + match.group() + " "
-
+soup = BeautifulSoup(TekstWyciagniety, 'html.parser')
+TekstPostu = soup.get_text()
 
 if (len(TekstPostu) < 300):
     print (TekstPostu)
-    print (Zdjecie)
+    if (Zdjecie != None):
+        print (Zdjecie)
