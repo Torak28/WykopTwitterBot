@@ -1,30 +1,27 @@
 import wykop
 from bs4 import BeautifulSoup
 
-index = 5
-'''
-    Tym razem używam BeautifulSoup to parsowania html przez co nie ma zabawy znacznikami i regexem. :>
-'''
-
-
 klucz = "9dFENlI8xb"
 sekret = "UH2uLO4KZH"
 
 api = wykop.WykopAPI(klucz, sekret)
-profile = api.get_stream_hot()
+gorace = api.get_stream_hot()
 
-#zmienne:
-TekstWyciagniety = profile[index].body
+for i in range(len(gorace)):
+    index = i
 
-Zdjecie = None
-if hasattr(profile[index], "embed"):
-    if hasattr(profile[index].embed, "url"):
-        Zdjecie = profile[index].embed.url
+    #zmienne:
+    TekstWyciagniety = gorace[index].body
 
-soup = BeautifulSoup(TekstWyciagniety, 'html.parser')
-TekstPostu = soup.get_text()
+    Zdjecie = None
+    if hasattr(gorace[index], "embed"):
+        if hasattr(gorace[index].embed, "url"):
+            Zdjecie = gorace[index].embed.url
 
-if (len(TekstPostu) < 300):
+    soup = BeautifulSoup(TekstWyciagniety, 'html.parser')
+    TekstPostu = soup.get_text()
+
+    print(i, ": ----------------")
     print (TekstPostu)
     if (Zdjecie != None):
         print (Zdjecie)
