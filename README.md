@@ -4,6 +4,12 @@
 
 Ideą jest sprawdzenie czy uda się wygrnerować jakieś zainteresowanie na Twitterze zamieszczając tam posty z [mikrobloga](https://www.wykop.pl/mikroblog/)
 
+### Korzystam z
+
+ * [Wykop API](https://github.com/p1c2u/wykop-sdk)
+ * [Twitter API - twit](https://www.npmjs.com/package/twit)
+ * [NodeJS](https://nodejs.org/en/)
+
 ### Zaciąganie z Mikrobloga
 
 Posłużyłem się tutaj **Pythonem**, **API Wykopu** w wersji [pythonowej](https://github.com/p1c2u/wykop-sdk), oraz **BeautifulSoup** do przetwarzania odpowiedzi z API.
