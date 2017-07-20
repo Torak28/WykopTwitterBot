@@ -1,0 +1,27 @@
+{
+  "name": "wykoptwitterbot",
+  "version": "1.0.0",
+  "description": "Ideą jest sprawdzenie czy uda się wygrnerować jakieś zainteresowanie na Twitterze zamieszczając tam posty z [mikrobloga](https://www.wykop.pl/mikroblog/)",
+  "main": "bot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Torak28/WykopTwitterBot.git"
+  },
+  "keywords": [
+    "wykop",
+    "twitter",
+    "bot"
+  ],
+  "author": "Torak28",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Torak28/WykopTwitterBot/issues"
+  },
+  "homepage": "https://github.com/Torak28/WykopTwitterBot#readme",
+  "dependencies": {
+    "twit": "^2.2.9"
+  }
+}
