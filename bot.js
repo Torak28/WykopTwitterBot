@@ -4,7 +4,7 @@ var exec = require('child_process').exec;
 var fs = require('fs');
 
 var T = new Twit(config);
-var index = 5;
+var index = 0;
 //6 - sam tekst
 //5 - tekst + obrazek
 
@@ -36,9 +36,9 @@ function tweetIt(){
 						T.post('statuses/update', tweet, tweeted);
 						function tweeted(err, data, response){
 							if(err){
-								console.log("Nie działa :c");
+								console.log("Nie działa text i obrazek :c");
 							}else{
-								console.log("Działa :)");	
+								console.log("Działa text i obrazek :)");	
 							}
 						}
 					}
@@ -59,9 +59,9 @@ function tweetIt(){
 
 					function tweeted(err, data, response){
 						if(err){
-							console.log("Nie działa :c");
+							console.log("Nie działa text :c");
 						}else{
-							console.log("Działa :)");
+							console.log("Działa text :)");
 						}
 					}
 				}
@@ -80,9 +80,9 @@ function tweetIt(){
 
 				function tweeted(err, data, response){
 					if(err){
-						console.log("Nie działa :c");
+						console.log("Nie działa obrazek :c");
 					}else{
-						console.log("Działa :)");			
+						console.log("Działa obrazek :)");			
 					}
 				}
 			}
