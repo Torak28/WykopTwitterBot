@@ -1,9 +1,10 @@
 import wykop
 from sys import argv
 from bs4 import BeautifulSoup
+from config import key, secret
 
-klucz = "9dFENlI8xb"
-sekret = "UH2uLO4KZH"
+klucz = key
+sekret = secret
 
 api = wykop.WykopAPI(klucz, sekret)
 gorace = api.get_stream_hot()
