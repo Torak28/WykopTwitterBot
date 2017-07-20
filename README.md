@@ -2,13 +2,35 @@
 
 ### Idea
 
-Ideą jest sprawdzenie czy uda się wygrnerować jakieś zainteresowanie na Twitterze zamieszczając tam posty z [mikrobloga](https://www.wykop.pl/mikroblog/)
+Ideą jest sprawdzenie czy uda się wygenerować jakieś zainteresowanie na Twitterze zamieszczając tam posty z [mikrobloga](https://www.wykop.pl/mikroblog/)
 
 ### Korzystam z
 
  * [Wykop API](https://github.com/p1c2u/wykop-sdk)
  * [Twitter API - twit](https://www.npmjs.com/package/twit)
  * [NodeJS](https://nodejs.org/en/)
+
+### Config
+
+Projekt zawiera liki ```config.py``` i ```config.js``` zawierające kolejno klucze do API Wykopu i klucze do API Twittera. 
+
+Klucze do Wykopu dostępne są [na oficjalnej stronie](https://www.wykop.pl/dla-programistow/api/) i przetrzymywane w pliku o strukturze:
+
+```python
+key = "klucz"
+secret = "sekret"
+```
+
+Klucze do Twittera dostępne są dla danego konta na [stronie deweloperskiej](https://apps.twitter.com/) i przetrzymywane w następujący sposób:
+
+```javascript
+module.exports = {
+	consumer_key:         'klucz1',
+	consumer_secret:      'klucz2',
+	access_token:         'klucz3',
+	access_token_secret:  'klucz4'
+}
+```
 
 ### Zaciąganie z Mikrobloga
 
@@ -27,7 +49,7 @@ tekst postu
 link od obrazka, jeśli taki istnieje
 ```
 
-Od strony samego kodu mamy tu do czynienia z połączeniem się z serwerem, pobraniem z gorących 12h(tylko taka metoda jest zaimplementowana w API), obrobieniem  odpowiedzi API w BeautifulSoup(odpowiedź to html-owa zawartość body danego postu), a następnie sprawdzenie czy odpoiwedź zawiera obrazek, jak tak to dochodzi jeszcze zlinkowanie go, jak post nie ma obrazka to ten etap jest pomijany.
+Od strony samego kodu mamy tu do czynienia z połączeniem się z serwerem, pobraniem z gorących 12h(tylko taka metoda jest zaimplementowana w API), obrobieniem  odpowiedzi API w BeautifulSoup(odpowiedź to html-owa zawartość body danego postu), a następnie sprawdzenie czy odpowiedź zawiera obrazek, jak tak to dochodzi jeszcze zlinkowanie go, jak post nie ma obrazka to ten etap jest pomijany.
 
 ```python
 import wykop
