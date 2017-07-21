@@ -1,0 +1,5 @@
+beautifulsoup4==4.6.0
+nltk==3.2.4
+peewee==2.9.2
+six==1.10.0
+wykop-sdk==0.4.0
