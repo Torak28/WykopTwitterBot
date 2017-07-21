@@ -4,12 +4,35 @@ var exec = require('child_process').exec;
 var fs = require('fs');
 
 var T = new Twit(config);
+var stream = T.stream('user');
 var index = 0;
-//6 - sam tekst
-//5 - tekst + obrazek
 
 var text = './output.txt';
 var picture = './output.jpg';
+
+function followed(eventMsg) {
+	console.log("Follow event!");
+	var name = eventMsg.source.name;
+	var screenName = eventMsg.source.screen_name;
+	FollowTweet('Elo @' + screenName + ' dzięki za followka!');
+}
+
+function FollowTweet(txt) {
+	var tweet = {
+	  status: txt
+	}
+
+	T.post('statuses/update', tweet, tweeted);
+
+	function tweeted(err, data, response) {
+		if (err) {
+			console.log("Nie udało się followanie :C");
+		} else {
+			console.log("Udało się!");
+		}
+	}
+}
+
 
 function tweetIt(){
 	var cmd = 'python3 300.py ' + index;
@@ -95,4 +118,5 @@ function tweetIt(){
 	}
 }
 
-setInterval(tweetIt, 1000*30);
+setInterval(tweetIt, 1000*60*60);
+stream.on('follow', followed);
