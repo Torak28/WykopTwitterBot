@@ -1,6 +1,10 @@
 {
   "name": "wykoptwitterbot",
   "version": "1.0.0",
+  "engines": {
+    "node": ".6.11.1",
+    "npm": "4.6.1"
+  }
   "description": "Ideą jest sprawdzenie czy uda się wygrnerować jakieś zainteresowanie na Twitterze zamieszczając tam posty z [mikrobloga](https://www.wykop.pl/mikroblog/)",
   "main": "bot.js",
   "scripts": {
