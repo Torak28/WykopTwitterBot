@@ -35,7 +35,7 @@ function FollowTweet(txt) {
 
 
 function tweetIt(){
-	var cmd = 'python3 300.py ' + index;
+	var cmd = 'python 300.py ' + index;
 	/*Wykonanie i obrobienie wyniku*/
 	exec(cmd, wykonanie);
 	function wykonanie(){
