@@ -11,7 +11,7 @@ filenamePicture = "output.jpg"
 filenameText = "output.txt"
 
 api = wykop.WykopAPI(klucz, sekret)
-gorace = api.get_stream_hot()
+gorace = api.get_stream()
 
 nazwa, liczba = argv
 index = int(liczba)

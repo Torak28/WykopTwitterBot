@@ -5,7 +5,7 @@ var fs = require('fs');
 
 var T = new Twit(config);
 var stream = T.stream('user');
-var index = 0;
+var index = 40;
 
 var text = './output.txt';
 var picture = './output.jpg';
@@ -35,7 +35,7 @@ function FollowTweet(txt) {
 
 
 function tweetIt(){
-	var cmd = 'python 300.py ' + index;
+	var cmd = 'python3 300.py ' + index;
 	/*Wykonanie i obrobienie wyniku*/
 	exec(cmd, wykonanie);
 	function wykonanie(){
@@ -112,11 +112,13 @@ function tweetIt(){
 		}
 	}
 	/**/
-	index++;
-	if(index == 15){
-		index = 1;
+	index--;
+	if(index == 0){
+		index = 40;
 	}
 }
 
-setInterval(tweetIt, 1000*60*60);
+var rN = Math.random() * (15 - 10) + 10;
+
+setInterval(tweetIt, 1000*60*rN);
 stream.on('follow', followed);
