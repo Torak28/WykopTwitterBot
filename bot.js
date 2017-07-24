@@ -118,7 +118,10 @@ function tweetIt(){
 	}
 }
 
-var rN = Math.random() * (15 - 10) + 10;
+var Min = 3;
+var Max = 6;
+
+var rN = Math.random() * (Max - Min) + Min;
 
 setInterval(tweetIt, 1000*60*rN);
 stream.on('follow', followed);
