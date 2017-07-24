@@ -11,7 +11,6 @@ var text = './output.txt';
 var picture = './output.jpg';
 
 function followed(eventMsg) {
-	console.log("Follow event!");
 	var name = eventMsg.source.name;
 	var screenName = eventMsg.source.screen_name;
 	FollowTweet('Elo @' + screenName + ' dzięki za followka!');
@@ -26,9 +25,9 @@ function FollowTweet(txt) {
 
 	function tweeted(err, data, response) {
 		if (err) {
-			console.log("Nie udało się followanie :C");
+			console.log("Nie udało się followanie :C" + err);
 		} else {
-			console.log("Udało się!");
+			console.log("Udało się followanie!");
 		}
 	}
 }
@@ -59,7 +58,7 @@ function tweetIt(){
 						T.post('statuses/update', tweet, tweeted);
 						function tweeted(err, data, response){
 							if(err){
-								console.log("Nie działa text i obrazek :c");
+								console.log("Nie działa text i obrazek :c" + err);
 							}else{
 								console.log("Działa text i obrazek :)");	
 							}
@@ -82,7 +81,7 @@ function tweetIt(){
 
 					function tweeted(err, data, response){
 						if(err){
-							console.log("Nie działa text :c");
+							console.log("Nie działa text :c" + err);
 						}else{
 							console.log("Działa text :)");
 						}
@@ -103,7 +102,7 @@ function tweetIt(){
 
 				function tweeted(err, data, response){
 					if(err){
-						console.log("Nie działa obrazek :c");
+						console.log("Nie działa obrazek :c" + err);
 					}else{
 						console.log("Działa obrazek :)");			
 					}
