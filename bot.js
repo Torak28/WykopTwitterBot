@@ -50,19 +50,21 @@ function tweetIt(){
 					var b64 = fs.readFileSync(picture, { encoding: 'base64' })
 					var stat = fs.statSync(picture);
 					console.log(stat.size);
-					T.post('media/upload', { media_data: b64 }, uploaded);
-					function uploaded(err, data, response) {
-						var id = data.media_id_string;
-						var tweet = {
-							status : tweetText,
-							media_ids: [id]
-						}
-						T.post('statuses/update', tweet, tweeted);
-						function tweeted(err, data, response){
-							if(err){
-								console.log("Nie działa text i obrazek :c" + err);
-							}else{
-								console.log("Działa text i obrazek :)");	
+					if (stat.sice <= 5242880) {
+						T.post('media/upload', { media_data: b64 }, uploaded);
+						function uploaded(err, data, response) {
+							var id = data.media_id_string;
+							var tweet = {
+								status : tweetText,
+								media_ids: [id]
+							}
+							T.post('statuses/update', tweet, tweeted);
+							function tweeted(err, data, response){
+								if(err){
+									console.log("Nie działa text i obrazek :c" + err);
+								}else{
+									console.log("Działa text i obrazek :)");	
+								}
 							}
 						}
 					}
