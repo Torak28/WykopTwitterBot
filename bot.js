@@ -48,7 +48,8 @@ function tweetIt(){
 				} else {
 					var tweetText = data;
 					var b64 = fs.readFileSync(picture, { encoding: 'base64' })
-					console.log(b64.size);
+					var stat = fs.statSync(picture);
+					console.log(stat.size);
 					T.post('media/upload', { media_data: b64 }, uploaded);
 					function uploaded(err, data, response) {
 						var id = data.media_id_string;
