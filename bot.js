@@ -49,7 +49,6 @@ function tweetIt(){
 					var tweetText = data;
 					var b64 = fs.readFileSync(picture, { encoding: 'base64' })
 					var stat = fs.statSync(picture);
-					console.log(stat.size);
 					if (stat.sice <= 5242880) {
 						T.post('media/upload', { media_data: b64 }, uploaded);
 						function uploaded(err, data, response) {
