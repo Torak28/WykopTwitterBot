@@ -1,14 +1,18 @@
-import wykop, requests, json, time, tweepy, os, random
+import requests, json, time, tweepy, os, random
 from bs4 import BeautifulSoup
-from config import klucz, sekret, twitter_key, twitter_secret, twitter_acces_token, twitter_acces_token_secret
+from config import twitter_key, twitter_secret, twitter_acces_token, twitter_acces_token_secret
 
 twitter_max = 280
-min_votes = 100
+min_votes = 0
 num_of_links = 20
 min_time = 300
 max_time = 600
+big_number = 31398503
 
 def get_link(id):
+    '''
+    Return text, number of + and link to img
+    '''
     link = 'https://www.wykop.pl/wpis/' + str(id) + '/'
     page = requests.get(link)
     if page.status_code == 200:
@@ -18,9 +22,12 @@ def get_link(id):
         text_box_s2 = text_box_s1.find('p')
         text = text_box_s2.text.strip()
         image = text_box_s1.find('img')
-        votes_s1 = soup.find('div', attrs={'class':'author ellipsis'})
-        votes_s2 = votes_s1.find('span')
-        vote = votes_s2.text[1:]
+        votes_s1 = soup.findAll('div', attrs={'class':'author ellipsis '})
+        votes_s2 = votes_s1[0].find('p', attrs={'class':'vC'})
+        votes_s3 = votes_s2.find('span')
+        vote = votes_s3.text[1:]
+        if vote is '':
+            vote = '0'
         if image is not None:
             return text, vote, image['src']
         return text, vote, None
@@ -28,7 +35,10 @@ def get_link(id):
         return None
 
 def check_link(link):
-    if link is None or link[0] is None or len(str(link[0])) > 279 or int(link[1]) < min_votes:
+    '''
+    Check if link is long enough and has good amount of +
+    '''
+    if link is None or len(str(link[0])) > 279 or int(link[1]) < min_votes:
         return None
     return link
 
@@ -39,6 +49,7 @@ def get_links(amount):
     i = 0
     while i < amount:
         link = get_link(index)
+        print('Print z get_links | i: ', i)
         good_link = check_link(link)
         if good_link is not None:
             text = good_link[0] if good_link[0] is not None else None
@@ -55,9 +66,17 @@ def get_links(amount):
     return ret
 
 def get_wykop_id():
-    api = wykop.WykopAPI(klucz, sekret)
-    all = api.get_stream()
-    return all[0].id
+    link = 'https://www.wykop.pl/mikroblog/wszystkie/'
+    page = requests.get(link)
+    if page.status_code == 200:
+        data = page.text
+        soup = BeautifulSoup(data, 'html.parser')
+        id_1 = soup.find('div', attrs={'id':'content'})
+        id_2 = id_1.find('li', attrs={'class':'entry iC '})
+        id_3 = id_2.findAll('div', attrs={'class':'wblock lcontrast dC '})
+        return int(id_3[0]['data-id'])
+    else:
+        return random.choice(range(21, big_number, 2))
 
 def dump_links_JSON(amount):
     str = get_links(amount)
@@ -90,7 +109,7 @@ def get_link_JSON():
     id = data['links'][0]['text']
     text = data['links'][0]['text']
     photo = data['links'][0]['photo']
-    del data['links'][0]
+    # del data['links'][0]
     dump_JSON(data)
     return text, photo
 
@@ -108,27 +127,30 @@ auth.set_access_token(twitter_acces_token, twitter_acces_token_secret)
 api = tweepy.API(auth)
 
 """
+[x] Odseparowac sie od wykop-sdk
+    [x] skrapowac id do najsiwezszego z najnowszych
+    [x] przejzec funkcje sprawdzajaca zeby nie sypala sie dla pustych wpisow ale ze zdjeciem
 [ ] Ogarnac zdjecia
+    [ ] ogarnac foramty linkow - gif? mov? jakies streamable czy co?
 [ ] Ogarnac followanie
 [ ] Jakies odpowiedzi?
 [ ] A co jak gif?
 [ ] A co jak filmik?
+[ ] Tweet za followa
 """
-
+dump_links_JSON(1000)
+'''
 i = 0
 while True:
     status, img = get_link_JSON()
-    send_flag = False
     if img is 'None':
         api.update_status(status)
-        send_flag = True
     else:
         check = dowload_pic(img)
         if check:
             api.update_with_media('tmp.jpg', status)
-            send_flag = True
             os.remove('tmp.jpg')
-    if send_flag:
-        print('Poszedl: ', str(i), ' tweet')
+    print('Poszedl: ', str(i), ' tweet')
     i +=1
     time.sleep(random.randint(min_time, max_time))
+'''
