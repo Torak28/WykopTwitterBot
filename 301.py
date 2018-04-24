@@ -1,12 +1,12 @@
-import requests, json, time, tweepy, os, random
+import requests, json, time, tweepy, os, random, wget, youtube_dl
 from bs4 import BeautifulSoup
 from config import twitter_key, twitter_secret, twitter_acces_token, twitter_acces_token_secret
 
 twitter_max = 280
 min_votes = 0
 num_of_links = 20
-min_time = 300
-max_time = 600
+min_time = 30
+max_time = 60
 big_number = 31398503
 
 def get_link(id):
@@ -21,7 +21,8 @@ def get_link(id):
         text_box_s1 = soup.find('div', attrs={'class':'text'})
         text_box_s2 = text_box_s1.find('p')
         text = text_box_s2.text.strip()
-        image = text_box_s1.find('img')
+        image_s1 = text_box_s1.find('div', attrs={'class':'media-content video'})
+        image = image_s1.find('a', href=True)['href'] if image_s1 is not None else (text_box_s1.find('img')['src'] if text_box_s1.find('img') is not None else None)
         votes_s1 = soup.findAll('div', attrs={'class':'author ellipsis '})
         votes_s2 = votes_s1[0].find('p', attrs={'class':'vC'})
         votes_s3 = votes_s2.find('span')
@@ -29,7 +30,7 @@ def get_link(id):
         if vote is '':
             vote = '0'
         if image is not None:
-            return text, vote, image['src']
+            return text, vote, image
         return text, vote, None
     else:
         return None
@@ -49,7 +50,6 @@ def get_links(amount):
     i = 0
     while i < amount:
         link = get_link(index)
-        print('Print z get_links | i: ', i)
         good_link = check_link(link)
         if good_link is not None:
             text = good_link[0] if good_link[0] is not None else None
@@ -109,11 +109,11 @@ def get_link_JSON():
     id = data['links'][0]['text']
     text = data['links'][0]['text']
     photo = data['links'][0]['photo']
-    # del data['links'][0]
+    del data['links'][0]
     dump_JSON(data)
     return text, photo
 
-def dowload_pic(url):
+def download_jpg(url):
     try:
         img_data = requests.get(url).content
         with open('tmp.jpg', 'wb') as h:
@@ -121,6 +121,60 @@ def dowload_pic(url):
         return True
     except Exception as e:
         return False
+
+def download_you(url):
+    try:
+        ydl_opts = {
+        'max_filesize' : 15000000,
+        'format' : 'mp4',
+        'outtmpl' : 'tmp.mp4'
+        }
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([url])
+        return True
+    except Exception as e:
+        return False
+
+def download_gfy(url):
+    link = url[:8] + 'giant.' + url[8:] + '.mp4'
+    try:
+        wget.download(link, out='tmp.mp4')
+    except Exception as e:
+        return False
+
+def download_media(url):
+    '''
+    1 - jpg
+    2 - you
+    3 - gfy
+    '''
+    check = url[8:]
+    if check.endswith('.jpg'):
+        try:
+            download_jpg(url)
+            return 1
+        except Exception as e:
+            return False
+    elif check.startswith('www.you'):
+        try:
+            download_you(url)
+            return 2
+        except Exception as e:
+            return False
+    elif check.startswith('gfy'):
+        try:
+            download_gfy(url)
+            return 3
+        except Exception as e:
+            return False
+    else:
+        return False
+
+def delete_tmp():
+    if os.path.isfile('tmp.mp4'):
+        os.remove('tmp.mp4')
+    elif os.path.isfile('tmp.jpg'):
+        os.remove('tmp.jpg')
 
 auth = tweepy.OAuthHandler(twitter_key, twitter_secret)
 auth.set_access_token(twitter_acces_token, twitter_acces_token_secret)
@@ -130,27 +184,43 @@ api = tweepy.API(auth)
 [x] Odseparowac sie od wykop-sdk
     [x] skrapowac id do najsiwezszego z najnowszych
     [x] przejzec funkcje sprawdzajaca zeby nie sypala sie dla pustych wpisow ale ze zdjeciem
-[ ] Ogarnac zdjecia
-    [ ] ogarnac foramty linkow - gif? mov? jakies streamable czy co?
+[x] Ogarnac media
+    [x] Formaty linkow info - jak to jest gif albo co innego to i tak miniaturke zapisuje jako jpg
+    [x] Ogarniete foramty, nadal trzeba pobrac
+    [x] Ogarnite pobieranie psozczegolnych formatow
+    [x] jakas flaga pobierania?
+[x] Debug mediow
+    [x] bladNIE
+    [ ] Spr czy sie wysyla tyle ile ma
 [ ] Ogarnac followanie
 [ ] Jakies odpowiedzi?
 [ ] A co jak gif?
 [ ] A co jak filmik?
 [ ] Tweet za followa
 """
-dump_links_JSON(1000)
-'''
+
 i = 0
+done_flag = False
+dbug = 0
 while True:
     status, img = get_link_JSON()
-    if img is 'None':
-        api.update_status(status)
+    if img == 'None':
+        if api.update_status(status):
+            done_flag = True
     else:
-        check = dowload_pic(img)
-        if check:
-            api.update_with_media('tmp.jpg', status)
-            os.remove('tmp.jpg')
-    print('Poszedl: ', str(i), ' tweet')
+        check = download_media(img)
+        if check is 1:
+            if api.update_with_media('tmp.jpg', status):
+                done_flag = True
+        elif check is 2 or check is 3:
+            if api.update_with_media('tmp.mp4', status):
+                done_flag = True
+        if done_flag:
+            delete_tmp()
+    if done_flag:
+        print('Poszedl: ', str(i), ' tweet')
+        time.sleep(random.randint(min_time, max_time))
     i +=1
-    time.sleep(random.randint(min_time, max_time))
-'''
+    done_flag = False
+    print(dbug)
+    dbug += 1
