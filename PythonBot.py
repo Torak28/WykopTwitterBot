@@ -176,11 +176,11 @@ def delete_tmp():
     elif os.path.isfile('tmp.jpg'):
         os.remove('tmp.jpg')
 
+"""
 auth = tweepy.OAuthHandler(twitter_key, twitter_secret)
 auth.set_access_token(twitter_acces_token, twitter_acces_token_secret)
 api = tweepy.API(auth)
 
-"""
 [x] Odseparowac sie od wykop-sdk
     [x] skrapowac id do najsiwezszego z najnowszych
     [x] przejzec funkcje sprawdzajaca zeby nie sypala sie dla pustych wpisow ale ze zdjeciem
@@ -197,7 +197,7 @@ api = tweepy.API(auth)
 [ ] A co jak gif?
 [ ] A co jak filmik?
 [ ] Tweet za followa
-"""
+
 
 i = 0
 done_flag = False
@@ -224,3 +224,4 @@ while True:
     done_flag = False
     print(dbug)
     dbug += 1
+"""
