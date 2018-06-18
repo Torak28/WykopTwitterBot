@@ -22,12 +22,65 @@ class WykopWrapper:
         else:
             return None
 
+    def check_str(self, text: str) -> bool:
+        if  text is not None and '#bookmeter' in text:
+            return True
+        return False
+
+    def get_max_wykop_id(self) -> int:
+        link = 'https://www.wykop.pl/mikroblog/wszystkie/'
+        page = requests.get(link)
+        if page.status_code == 200:
+            data = page.text
+            soup = BeautifulSoup(data, 'html.parser')
+            id_1 = soup.find('div', attrs={'id':'content'})
+            id_2 = id_1.find('li', attrs={'class':'entry iC '})
+            id_3 = id_2.findAll('div', attrs={'class':'wblock lcontrast dC '})
+            return int(id_3[0]['data-id'])
+        else:
+            return random.choice(range(21, big_number, 2))
+
 class StringWrapper:
     '''
     Class to check and save strings
     '''
 
-    def dump_JSON(self, str: str) -> None:
+    def get_author(self, text: str) -> str:
+        if 'Autor' in text:
+             return text.split('Autor:')[1].split('\n')[0][1:]
+        return None
+
+    def get_title(self, text: str) -> str:
+        if 'Tytuł' in text:
+             return text.split('Tytuł:')[1].split('\n')[0][1:]
+        return None
+
+    def get_type(self, text: str) -> str:
+        if 'Gatunek' in text:
+             return text.split('Gatunek:')[1].split('\n')[0][1:]
+        return None
+
+    def get_grade(self, text: str) -> str:
+        if '★' in text:
+             return text.count('★')
+        return None
+
+    def get_info(self, text: str) -> str:
+        if '#bookmeter' in text:
+             return text.split('\n\n', 1)[1].split('#bookmeter')[0]
+        return None
+
+    def get_data(self, text: str) -> dict:
+        author = self.get_author(text)
+        title = self.get_title(text)
+        type = self.get_type(text)
+        grade = self.get_grade(text)
+        info = self.get_info(text)
+        if author is not None and title is not None and type is not None and grade is not None and info is not None:
+            return author, title, type, grade, info
+        return None
+
+    def dump_JSON(self, str: dict) -> None:
         '''
         Write str to data.json
         '''
@@ -35,58 +88,41 @@ class StringWrapper:
             json.dump(str, f, ensure_ascii=False, indent=4)
         f.close()
 
-    def check_str(self, str: str) -> bool:
-        if '#bookmeter' in str:
-            return True
-        return False
 
-    def get_author(self, str: str) -> str:
-        if 'Autor' in str:
-             return str.split('Autor:')[1].split('\n')[0][1:]
-        return None
-
-    def get_title(self, str: str) -> str:
-        if 'Tytuł' in str:
-             return str.split('Tytuł:')[1].split('\n')[0][1:]
-        return None
-
-    def get_type(self, str: str) -> str:
-        if 'Gatunek' in str:
-             return str.split('Gatunek:')[1].split('\n')[0][1:]
-        return None
-
-    def get_grade(self, str: str) -> str:
-        if '★' in str:
-             return str.count('★')
-        return None
-
-    def get_info(self, str: str) -> str:
-        if '#bookmeter' in str:
-             return str.split('\n\n', 1)[1].split('#bookmeter')[0]
-        return None
-
-
-ww = WykopWrapper()
-sw = StringWrapper()
-text = ww.get_link(11633869)
-print(text)
-if sw.check_str(text):
-    print("tak")
-    print(sw.get_author(text))
-    print(sw.get_title(text))
-    print(sw.get_type(text))
-    print(sw.get_grade(text))
-    print(sw.get_info(text))
+if __name__ == "__main__":
+    ww = WykopWrapper()
+    sw = StringWrapper()
+    ret = {}
+    ret['books'] = []
+    index = 11633869
+    max = ww.get_max_wykop_id()
+    how_many = (max - index) // 2
+    current = 1
+    while index <= max:
+        text = ww.get_link(index)
+        print(f'{current}/{how_many} -> {current/how_many * 100:.3f}%')
+        if ww.check_str(text):
+            author, title, type, grade, info = sw.get_data(text)
+            ret['books'].append({
+                        'Author': str(author),
+                        'Title': str(title),
+                        'Type': str(type),
+                        'Grade': str(grade),
+                        'Info': str(info)
+                        })
+        current += 1
+        index += 2
+    sw.dump_JSON(ret)
 
 
 
 """
-[ ] Pobrac i wyluskac:
+[x] Pobrac i wyluskac:
     * Tytul
     * Autor
     * Gatunek
     * Ocena
-[ ] Zmienic konwencje data.json tak zeby lepiej pobrac
+[x] Zmienic konwencje data.json tak zeby lepiej pobrac
 [ ] Zapisac do Bazy Danych powyzsze dane:
     * sql lite i jazda
 [ ] Pobrac wiecej
