@@ -66,7 +66,7 @@ class StringWrapper:
         return None
 
     def get_info(self, text: str) -> str:
-        if '#bookmeter' in text:
+        if '\n\n' in text:
              return text.split('\n\n', 1)[1].split('#bookmeter')[0]
         return None
 
@@ -100,7 +100,7 @@ if __name__ == "__main__":
     current = 1
     while index <= max:
         text = ww.get_link(index)
-        print(f'{current}/{how_many} -> {current/how_many * 100:.3f}%')
+        print(f'{current}/{how_many} -> {current/how_many * 100:.3f}%, index - {index}')
         if ww.check_str(text):
             author, title, type, grade, info = sw.get_data(text)
             ret['books'].append({
@@ -117,6 +117,7 @@ if __name__ == "__main__":
 
 
 """
+[ ] Add some debug mode to check wykop id
 [x] Pobrac i wyluskac:
     * Tytul
     * Autor
