@@ -2,6 +2,9 @@ import requests, json, os
 from bs4 import BeautifulSoup
 
 class WykopWrapper:
+    '''
+    Class to wrap wykop.pl content
+    '''
 
     def get_link(self, id: int) -> str:
         '''
@@ -15,27 +18,67 @@ class WykopWrapper:
             text_box_s1 = soup.find('div', attrs={'class':'text'})
             text_box_s2 = text_box_s1.find('p')
             text = text_box_s2.text.strip()
-            image_s1 = text_box_s1.find('div', attrs={'class':'media-content video'})
-            image = image_s1.find('a', href=True)['href'] if image_s1 is not None else (text_box_s1.find('img')['src'] if text_box_s1.find('img') is not None else None)
-            votes_s1 = soup.findAll('div', attrs={'class':'author ellipsis '})
-            votes_s2 = votes_s1[0].find('p', attrs={'class':'vC'})
-            votes_s3 = votes_s2.find('span')
-            vote = votes_s3.text[1:]
-            if vote is '':
-                vote = '0'
-            if image is not None:
-                return text, vote, image
-            return text, vote, None
+            return text
         else:
             return None
 
+class StringWrapper:
+    '''
+    Class to check and save strings
+    '''
+
     def dump_JSON(self, str: str) -> None:
+        '''
+        Write str to data.json
+        '''
         with open('data.json', 'w+', encoding='utf-8') as f:
             json.dump(str, f, ensure_ascii=False, indent=4)
         f.close()
 
+    def check_str(self, str: str) -> bool:
+        if '#bookmeter' in str:
+            return True
+        return False
+
+    def get_author(self, str: str) -> str:
+        if 'Autor' in str:
+             return str.split('Autor:')[1].split('\n')[0][1:]
+        return None
+
+    def get_title(self, str: str) -> str:
+        if 'Tytuł' in str:
+             return str.split('Tytuł:')[1].split('\n')[0][1:]
+        return None
+
+    def get_type(self, str: str) -> str:
+        if 'Gatunek' in str:
+             return str.split('Gatunek:')[1].split('\n')[0][1:]
+        return None
+
+    def get_grade(self, str: str) -> str:
+        if '★' in str:
+             return str.count('★')
+        return None
+
+    def get_info(self, str: str) -> str:
+        if '#bookmeter' in str:
+             return str.split('\n\n', 1)[1].split('#bookmeter')[0]
+        return None
+
+
 ww = WykopWrapper()
-ww.dump_JSON(ww.get_link(11633869))
+sw = StringWrapper()
+text = ww.get_link(11633869)
+print(text)
+if sw.check_str(text):
+    print("tak")
+    print(sw.get_author(text))
+    print(sw.get_title(text))
+    print(sw.get_type(text))
+    print(sw.get_grade(text))
+    print(sw.get_info(text))
+
+
 
 """
 [ ] Pobrac i wyluskac:
@@ -43,6 +86,7 @@ ww.dump_JSON(ww.get_link(11633869))
     * Autor
     * Gatunek
     * Ocena
+[ ] Zmienic konwencje data.json tak zeby lepiej pobrac
 [ ] Zapisac do Bazy Danych powyzsze dane:
     * sql lite i jazda
 [ ] Pobrac wiecej
