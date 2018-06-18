@@ -125,7 +125,8 @@ if __name__ == "__main__":
 [x] Zmienic konwencje data.json tak zeby lepiej pobrac
 [ ] Zapisac do Bazy Danych powyzsze dane:
     * sql lite i jazda
-[ ] Pobrac wiecej
+[x] Pobrac wiecej
     * Najstarszy : 11633869
     * Potem      : +2
+    * This is sooooooooooooooooooooo slow. Better try some node js :c
 """
