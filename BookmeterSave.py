@@ -1,4 +1,4 @@
-import requests, json, os
+import requests, json, os, wykop
 from bs4 import BeautifulSoup
 
 class WykopWrapper:
@@ -87,6 +87,10 @@ class StringWrapper:
         with open('data.json', 'w+', encoding='utf-8') as f:
             json.dump(str, f, ensure_ascii=False, indent=4)
         f.close()
+
+'''
+    Zrobic test dla 11637749 bo mi zawsze wywala :c
+'''
 
 
 if __name__ == "__main__":
