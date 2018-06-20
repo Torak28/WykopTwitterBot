@@ -23,7 +23,7 @@ while flag:
             else:
                 ret['books'].append({'Book' : text,
                                      'ID'   : id})
-        except e:
+        except:
             print(f'Blad dla strony: {page} i iteratora: {i}')
     page += 1
 
