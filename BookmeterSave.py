@@ -1,44 +1,38 @@
 import requests, json, os, wykop
 from bs4 import BeautifulSoup
+from config import key, secret
 
-class WykopWrapper:
-    '''
-    Class to wrap wykop.pl content
-    '''
 
-    def get_link(self, id: int) -> str:
-        '''
-        Return text, number of + and link to img
-        '''
-        link = 'https://www.wykop.pl/wpis/' + str(id) + '/'
-        page = requests.get(link)
-        if page.status_code == 200:
-            data = page.text
-            soup = BeautifulSoup(data, 'html.parser')
-            text_box_s1 = soup.find('div', attrs={'class':'text'})
-            text_box_s2 = text_box_s1.find('p')
-            text = text_box_s2.text.strip()
-            return text
-        else:
-            return None
+class WykopWrapper():
 
-    def check_str(self, text: str) -> bool:
-        if  text is not None and '#bookmeter' in text:
-            return True
-        return False
+    def download_tag(self, tag: str = 'bookmeter', page: int = 1, flag: bool = True, index: int = 11633869) -> dict:
+        api = wykop.WykopAPI(key, secret)
 
-    def get_max_wykop_id(self) -> int:
-        link = 'https://www.wykop.pl/mikroblog/wszystkie/'
-        page = requests.get(link)
-        if page.status_code == 200:
-            data = page.text
-            soup = BeautifulSoup(data, 'html.parser')
-            id_1 = soup.find('div', attrs={'id':'content'})
-            id_2 = id_1.find('li', attrs={'class':'entry iC '})
-            id_3 = id_2.findAll('div', attrs={'class':'wblock lcontrast dC '})
-            return int(id_3[0]['data-id'])
-        else:
-            return random.choice(range(21, big_number, 2))
+        ret = {}
+        ret['books'] = []
+        while flag:
+            link = api.request("tag", 'index', [tag,], {"appkey": key, "page": str(page)})
+            print(page)
+            for i in range(len(dict(link)['items'])):
+                try:
+                    id = dict(link)['items'][i]['id']
+                    text = dict(link)['items'][i]['body']
+                    if int(id) < index:
+                        flag = False
+                        break
+                    else:
+                        ret['books'].append({'Book' : text,
+                                             'ID'   : id})
+                except:
+                    print(f'Blad dla strony: {page} i iteratora: {i}')
+            page += 1
+        return ret
+
+
+    def save_to_JSON(self, data: dict) -> None:
+        with open('dataAPI.json', 'w+', encoding='utf-8') as f:
+            json.dump(data, f, sort_keys=True, ensure_ascii=False, indent=4)
+        f.close()
 
 class StringWrapper:
     '''
@@ -95,28 +89,9 @@ class StringWrapper:
 
 if __name__ == "__main__":
     ww = WykopWrapper()
-    sw = StringWrapper()
-    ret = {}
-    ret['books'] = []
-    index = 11633869
-    max = ww.get_max_wykop_id()
-    how_many = (max - index) // 2
-    current = 1
-    while index <= max:
-        text = ww.get_link(index)
-        print(f'{current}/{how_many} -> {current/how_many * 100:.3f}%, index - {index}')
-        if ww.check_str(text):
-            author, title, type, grade, info = sw.get_data(text)
-            ret['books'].append({
-                        'Author': str(author),
-                        'Title': str(title),
-                        'Type': str(type),
-                        'Grade': str(grade),
-                        'Info': str(info)
-                        })
-        current += 1
-        index += 2
-    sw.dump_JSON(ret)
+    # ww.save_to_JSON(ww.download_tag())
+    print(ww.download_tag())
+
 
 
 
