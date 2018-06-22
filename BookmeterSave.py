@@ -43,6 +43,8 @@ class StringWrapper:
         text = BeautifulSoup(text, 'html.parser').text
         if 'Autor:' in text:
              return text.split('Autor:')[1].split('\n')[0][1:]
+        elif 'Autorzy:' in text:
+             return text.split('Autorzy:')[1].split('\n')[0][1:]
         return None
 
     def get_title(self, text: str) -> str:
@@ -70,12 +72,15 @@ class StringWrapper:
         return None
 
     def get_data(self, text: str) -> dict:
+        """
+        Grade can be None
+        """
         author = self.get_author(text)
         title = self.get_title(text)
         type = self.get_type(text)
         grade = self.get_grade(text)
         # info = self.get_info(text)
-        if author is not None and title is not None and type is not None and grade is not None: #and info is not None:
+        if author is not None and title is not None and type is not None: #and info is not None:
             return author, title, type, grade# , info
         return None
 
@@ -118,17 +123,32 @@ if __name__ == "__main__":
     ret = dw.read_JSON('dataAPI.json')
     xd = {}
     xd['Books'] = []
-    count = 0
+    count, aut, tyt, gat, oce = 0, 0, 0, 0, 0
     for i in range(len(ret['Books'])):
         # print(sw.get_data(ret['Books'][i]['Book']))
         if sw.get_data(ret['Books'][i]['Book']) is None:
+            txt = BeautifulSoup(ret['Books'][i]['Book'], 'html.parser').text
             count += 1
-            xd['Books'].append({'text' : BeautifulSoup(ret['Books'][i]['Book'], 'html.parser').text})
+            aut += 1 if sw.get_author(txt) is None else 0
+            tyt += 1 if sw.get_title(txt) is None else 0
+            gat += 1 if sw.get_type(txt) is None else 0
+            oce += 1 if sw.get_grade(txt) is None else 0
+
+            F = 'A' if sw.get_author(txt) is None else '-' +\
+                'T' if sw.get_title(txt) is None else '-' +\
+                'G' if sw.get_type(txt) is None else '-' +\
+                'O' if sw.get_grade(txt) is None else '-'
+
+            xd['Books'].append({'Autor: '   : sw.get_author(txt),
+                                'Tytuł: '   : sw.get_title(txt),
+                                'Gatunek: ' : sw.get_type(txt),
+                                'Ocena: '   : sw.get_grade(txt),
+                                'Text: '    : txt,
+                                'Debug: '   : F
+                                })
     dw.save_to_JSON(data=xd, file='xd.json')
-    print(count)
-
-
-
+    print(f'Wszystkich zlych: {count}, w tym\n\tAutorow: {aut}\n\tTytulow: {tyt}\n\tGatunkow: {gat}\n\tOcen: {oce}')
+    # 546, 542(Autorzy), 130(brak oceny) textow failuje :c
 
 
 """
