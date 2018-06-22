@@ -51,6 +51,12 @@ class StringWrapper:
         text = BeautifulSoup(text, 'html.parser').text
         if 'Tytuł:' in text:
              return text.split('Tytuł:')[1].split('\n')[0][1:]
+        elif 'Tytułł:' in text:
+             return text.split('Tytułł:')[1].split('\n')[0][1:]
+        elif 'Tytuły:' in text:
+             return text.split('Tytuły:')[1].split('\n')[0][1:]
+        elif 'Tutuły:' in text:
+             return text.split('Tutuł:')[1].split('\n')[0][1:]
         return None
 
     def get_type(self, text: str) -> str:
@@ -124,6 +130,7 @@ if __name__ == "__main__":
     xd = {}
     xd['Books'] = []
     count, aut, tyt, gat, oce = 0, 0, 0, 0, 0
+    deb = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     for i in range(len(ret['Books'])):
         # print(sw.get_data(ret['Books'][i]['Book']))
         if sw.get_data(ret['Books'][i]['Book']) is None:
@@ -134,20 +141,38 @@ if __name__ == "__main__":
             gat += 1 if sw.get_type(txt) is None else 0
             oce += 1 if sw.get_grade(txt) is None else 0
 
-            F = 'A' if sw.get_author(txt) is None else '-' +\
-                'T' if sw.get_title(txt) is None else '-' +\
-                'G' if sw.get_type(txt) is None else '-' +\
-                'O' if sw.get_grade(txt) is None else '-'
+            tmp1 = 'A' if sw.get_author(txt) is None else '-'
+            tmp2 = 'T' if sw.get_title(txt) is None else '-'
+            tmp3 = 'G' if sw.get_type(txt) is None else '-'
+            tmp4 = 'O' if sw.get_grade(txt) is None else '-'
+
+            D = tmp1 + tmp2 + tmp3 + tmp4
+
+            deb[0] += 1 if D == 'ATGO' else 0
+            deb[1] += 1 if D == 'A---' else 0
+            deb[2] += 1 if D == '-T--' else 0
+            deb[3] += 1 if D == '--G-' else 0
+            deb[4] += 1 if D == '---O' else 0
+            deb[5] += 1 if D == 'AT--' else 0
+            deb[6] += 1 if D == '-TG-' else 0
+            deb[7] += 1 if D == '-T-O' else 0
+            deb[8] += 1 if D == 'A-G-' else 0
+            deb[9] += 1 if D == '--GO' else 0
+            deb[10] += 1 if D == 'A--O' else 0
+            deb[11] += 1 if D == 'ATG-' else 0
+            deb[12] += 1 if D == '-TGO' else 0
+            deb[13] += 1 if D == 'A-GO' else 0
+            deb[14] += 1 if D == 'AT-O' else 0
 
             xd['Books'].append({'Autor: '   : sw.get_author(txt),
                                 'Tytuł: '   : sw.get_title(txt),
                                 'Gatunek: ' : sw.get_type(txt),
                                 'Ocena: '   : sw.get_grade(txt),
                                 'Text: '    : txt,
-                                'Debug: '   : F
+                                'Debug: '   : D
                                 })
     dw.save_to_JSON(data=xd, file='xd.json')
-    print(f'Wszystkich zlych: {count}, w tym\n\tAutorow: {aut}\n\tTytulow: {tyt}\n\tGatunkow: {gat}\n\tOcen: {oce}')
+    print(f'Wszystkich zlych: {count}, w tym\n\tAutorow: {aut}\n\tTytulow: {tyt}\n\tGatunkow: {gat}\n\tOcen: {oce}\n\nA dokladnie:\n\tATGO - {deb[0]}\n\tA--- - {deb[1]}\n\t-T-- - {deb[2]}\n\t--G- - {deb[3]}\n\t---O - {deb[4]}\n\tAT-- - {deb[5]}\n\t-TG- - {deb[6]}\n\t-T-O - {deb[7]}\n\tA-G- - {deb[8]}\n\t--GO - {deb[9]}\n\tA--O - {deb[10]}\n\tATG- - {deb[11]}\n\t-TGO - {deb[12]}\n\tA-GO - {deb[13]}\n\tAT-O - {deb[14]}\nW sumie: {sum(deb)}')
     # 546, 542(Autorzy), 130(brak oceny) textow failuje :c
 
 
