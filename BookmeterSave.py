@@ -160,9 +160,9 @@ if __name__ == "__main__":
             t3 = 'G' if sw.get_type(txt) is None else '-'
             t4 = 'O' if sw.get_grade(txt) is None else '-'
 
-            D = t1 + t2 + t3 + t4
+            tD = t1 + t2 + t3 + t4
 
-            if D != 'ATGO':
+            if tD != 'ATGO':
                 count += 1
                 aut += 1 if sw.get_author(txt) is None else 0
                 tyt += 1 if sw.get_title(txt) is None else 0
@@ -200,21 +200,37 @@ if __name__ == "__main__":
                                     })
     dw.save_to_JSON(data=xd, file='xd.json')
     print(f'Wszystkich zlych: {count}, w tym\n\tAutorow: {aut}\n\tTytulow: {tyt}\n\tGatunkow: {gat}\n\tOcen: {oce}\n\nA dokladnie:\n\tATGO - {deb[0]}\n\tA--- - {deb[1]}\n\t-T-- - {deb[2]}\n\t--G- - {deb[3]}\n\t---O - {deb[4]}\n\tAT-- - {deb[5]}\n\t-TG- - {deb[6]}\n\t-T-O - {deb[7]}\n\tA-G- - {deb[8]}\n\t--GO - {deb[9]}\n\tA--O - {deb[10]}\n\tATG- - {deb[11]}\n\t-TGO - {deb[12]}\n\tA-GO - {deb[13]}\n\tAT-O - {deb[14]}\nW sumie: {sum(deb)}')
-    # 546, 542(Autorzy), 130(brak oceny), 67(po ifie i odrzuceniu jakis zapytan), 60(gatunek) textow failuje :c
-
+    # 546, 542(Autorzy), 130(brak oceny), 67(po ifie i odrzuceniu jakis zapytan), 59(gatunek plus wielkosc liter) textow failuje :c
 
 """
-[x] Add some debug mode to check wykop id
-[x] Pobrac i wyluskac:
-    * Tytul
-    * Autor
-    * Gatunek
-    * Ocena
-[x] Zmienic konwencje data.json tak zeby lepiej pobrac
+Co jak jest wiecej niz jedno xd
+
+Wszystkich zlych: 59, w tym
+        Autorow: 26
+        Tytulow: 24
+        Gatunkow: 51
+        Ocen: 24
+
+A dokladnie:
+        ATGO - 0
+        A--- - 1
+        -T-- - 2
+        --G- - 11
+        ---O - 0
+        AT-- - 0
+        -TG- - 0
+        -T-O - 1
+        A-G- - 1
+        --GO - 19
+        A--O - 3
+        ATG- - 20
+        -TGO - 0
+        A-GO - 0
+        AT-O - 1
+W sumie: 59
+
+
+
 [ ] Zapisac do Bazy Danych powyzsze dane:
     * sql lite i jazda
-[x] Pobrac wiecej
-    * Najstarszy : 11633869
-    * Potem      : +2
-    * This is sooooooooooooooooooooo slow. Better try some node js :c
 """
