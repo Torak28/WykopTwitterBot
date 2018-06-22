@@ -41,19 +41,19 @@ class StringWrapper:
 
     def get_author(self, text: str) -> str:
         text = BeautifulSoup(text, 'html.parser').text
-        if 'Autor' in text:
+        if 'Autor:' in text:
              return text.split('Autor:')[1].split('\n')[0][1:]
         return None
 
     def get_title(self, text: str) -> str:
         text = BeautifulSoup(text, 'html.parser').text
-        if 'Tytuł' in text:
+        if 'Tytuł:' in text:
              return text.split('Tytuł:')[1].split('\n')[0][1:]
         return None
 
     def get_type(self, text: str) -> str:
         text = BeautifulSoup(text, 'html.parser').text
-        if 'Gatunek' in text:
+        if 'Gatunek:' in text:
              return text.split('Gatunek:')[1].split('\n')[0][1:]
         return None
 
@@ -116,8 +116,16 @@ if __name__ == "__main__":
     sw = StringWrapper()
     # dw.save_to_JSON(data=sw.get_data(dw.read_JSON('dataAPI.json')))
     ret = dw.read_JSON('dataAPI.json')
+    xd = {}
+    xd['Books'] = []
+    count = 0
     for i in range(len(ret['Books'])):
-        print(sw.get_data(ret['Books'][i]['Book']))
+        # print(sw.get_data(ret['Books'][i]['Book']))
+        if sw.get_data(ret['Books'][i]['Book']) is None:
+            count += 1
+            xd['Books'].append({'text' : BeautifulSoup(ret['Books'][i]['Book'], 'html.parser').text})
+    dw.save_to_JSON(data=xd, file='xd.json')
+    print(count)
 
 
 
