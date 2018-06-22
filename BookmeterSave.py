@@ -9,7 +9,7 @@ class WykopWrapper():
         api = wykop.WykopAPI(key, secret)
 
         ret = {}
-        ret['books'] = []
+        ret['Books'] = []
         while flag:
             link = api.request("tag", 'index', [tag,], {"appkey": key, "page": str(page)})
             print(page)
@@ -29,8 +29,8 @@ class WykopWrapper():
         return ret
 
 
-    def save_to_JSON(self, data: dict) -> None:
-        with open('dataAPI.json', 'w+', encoding='utf-8') as f:
+    def save_to_JSON(self, data: dict, file: str = 'dataAPI.json') -> None:
+        with open(file, 'w+', encoding='utf-8') as f:
             json.dump(data, f, sort_keys=True, ensure_ascii=False, indent=4)
         f.close()
 
@@ -40,26 +40,31 @@ class StringWrapper:
     '''
 
     def get_author(self, text: str) -> str:
+        text = BeautifulSoup(text, 'html.parser').text
         if 'Autor' in text:
              return text.split('Autor:')[1].split('\n')[0][1:]
         return None
 
     def get_title(self, text: str) -> str:
+        text = BeautifulSoup(text, 'html.parser').text
         if 'Tytuł' in text:
              return text.split('Tytuł:')[1].split('\n')[0][1:]
         return None
 
     def get_type(self, text: str) -> str:
+        text = BeautifulSoup(text, 'html.parser').text
         if 'Gatunek' in text:
              return text.split('Gatunek:')[1].split('\n')[0][1:]
         return None
 
     def get_grade(self, text: str) -> str:
+        text = BeautifulSoup(text, 'html.parser').text
         if '★' in text:
              return text.count('★')
         return None
 
     def get_info(self, text: str) -> str:
+        text = BeautifulSoup(text, 'html.parser').text
         if '\n\n' in text:
              return text.split('\n\n', 1)[1].split('#bookmeter')[0]
         return None
@@ -69,9 +74,9 @@ class StringWrapper:
         title = self.get_title(text)
         type = self.get_type(text)
         grade = self.get_grade(text)
-        info = self.get_info(text)
-        if author is not None and title is not None and type is not None and grade is not None and info is not None:
-            return author, title, type, grade, info
+        # info = self.get_info(text)
+        if author is not None and title is not None and type is not None and grade is not None: #and info is not None:
+            return author, title, type, grade# , info
         return None
 
     def dump_JSON(self, str: dict) -> None:
@@ -82,21 +87,44 @@ class StringWrapper:
             json.dump(str, f, ensure_ascii=False, indent=4)
         f.close()
 
+class DataWrapper:
+
+    def read_JSON(self, file: str = 'dataAPI.json') -> dict:
+        try:
+            with open(file, encoding='utf-8') as f:
+                data = json.load(f)
+            f.close()
+        except Exception as e:
+            data = None
+        return data
+
+    def save_to_JSON(self, data: dict, file: str = 'data.json') -> None:
+        with open(file, 'w+', encoding='utf-8') as f:
+            json.dump(data, f, sort_keys=True, ensure_ascii=False, indent=4)
+        f.close()
+
 '''
     Zrobic test dla 11637749 bo mi zawsze wywala :c
 '''
 
 
 if __name__ == "__main__":
-    ww = WykopWrapper()
+    # ww = WykopWrapper()
     # ww.save_to_JSON(ww.download_tag())
-    print(ww.download_tag())
+    # print(ww.download_tag())
+    dw = DataWrapper()
+    sw = StringWrapper()
+    # dw.save_to_JSON(data=sw.get_data(dw.read_JSON('dataAPI.json')))
+    ret = dw.read_JSON('dataAPI.json')
+    for i in range(len(ret['Books'])):
+        print(sw.get_data(ret['Books'][i]['Book']))
+
 
 
 
 
 """
-[ ] Add some debug mode to check wykop id
+[x] Add some debug mode to check wykop id
 [x] Pobrac i wyluskac:
     * Tytul
     * Autor
