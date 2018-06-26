@@ -133,10 +133,6 @@ class DataWrapper:
             json.dump(data, f, sort_keys=True, ensure_ascii=False, indent=4)
         f.close()
 
-'''
-    Zrobic test dla 11637749 bo mi zawsze wywala :c
-'''
-
 
 if __name__ == "__main__":
     # ww = WykopWrapper()
