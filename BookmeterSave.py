@@ -208,33 +208,9 @@ if __name__ == "__main__":
     # 546, 542(Autorzy), 130(brak oceny), 67(po ifie i odrzuceniu jakis zapytan), 59(gatunek plus wielkosc liter) textow failuje :c
 
 """
-Co jak jest wiecej niz jedno xd
-
-Wszystkich zlych: 59, w tym
-        Autorow: 26
-        Tytulow: 24
-        Gatunkow: 51
-        Ocen: 24
-
-A dokladnie:
-        ATGO - 0
-        A--- - 1
-        -T-- - 2
-        --G- - 11
-        ---O - 0
-        AT-- - 0
-        -TG- - 0
-        -T-O - 1
-        A-G- - 1
-        --GO - 19
-        A--O - 3
-        ATG- - 20
-        -TGO - 0
-        A-GO - 0
-        AT-O - 1
-W sumie: 59
-
-
+[ ] Niby spoko ale zupelnie nie zapisuje podwojnych ksiazek. W sensie ze jak np. w jendym wpisie jest wiecej niz jedna ksiazka
+[ ] Niby spoko ale dobre + zle != wszystkie
+[ ] Niby spoko ale w dobrych czasem nie ma ocen :c
 
 [ ] Zapisac do Bazy Danych powyzsze dane:
     * sql lite i jazda
