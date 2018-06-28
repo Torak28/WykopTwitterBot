@@ -142,15 +142,14 @@ if __name__ == "__main__":
     sw = StringWrapper()
     # dw.save_to_JSON(data=sw.get_data(dw.read_JSON('dataAPI.json')))
     ret = dw.read_JSON('dataAPI.json')
-    xd = {}
-    xd['Books'] = []
-    count, aut, tyt, gat, oce = 0, 0, 0, 0, 0
+    zle = dobre = {}
+    zle['Books'] = dobre['Books'] = []
+    count, aut, tyt, gat, oce, good = 0, 0, 0, 0, 0, 0
     deb = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     for i in range(len(ret['Books'])):
         # print(sw.get_data(ret['Books'][i]['Book']))
-        if sw.get_data(ret['Books'][i]['Book']) is None:
-            txt = BeautifulSoup(ret['Books'][i]['Book'], 'html.parser').text
-
+        txt = BeautifulSoup(ret['Books'][i]['Book'], 'html.parser').text
+        if sw.get_data(txt) is None:
             t1 = 'A' if sw.get_author(txt) is None else '-'
             t2 = 'T' if sw.get_title(txt) is None else '-'
             t3 = 'G' if sw.get_type(txt) is None else '-'
@@ -187,15 +186,25 @@ if __name__ == "__main__":
                 deb[12] += 1 if D == '-TGO' else 0
                 deb[13] += 1 if D == 'A-GO' else 0
                 deb[14] += 1 if D == 'AT-O' else 0
-                xd['Books'].append({'Autor: '   : sw.get_author(txt),
+                zle['Books'].append({'Autor: '   : sw.get_author(txt),
                                     'Tytuł: '   : sw.get_title(txt),
                                     'Gatunek: ' : sw.get_type(txt),
                                     'Ocena: '   : sw.get_grade(txt),
                                     'Text: '    : txt,
                                     'Debug: '   : D
                                     })
-    dw.save_to_JSON(data=xd, file='xd.json')
-    print(f'Wszystkich zlych: {count}, w tym\n\tAutorow: {aut}\n\tTytulow: {tyt}\n\tGatunkow: {gat}\n\tOcen: {oce}\n\nA dokladnie:\n\tATGO - {deb[0]}\n\tA--- - {deb[1]}\n\t-T-- - {deb[2]}\n\t--G- - {deb[3]}\n\t---O - {deb[4]}\n\tAT-- - {deb[5]}\n\t-TG- - {deb[6]}\n\t-T-O - {deb[7]}\n\tA-G- - {deb[8]}\n\t--GO - {deb[9]}\n\tA--O - {deb[10]}\n\tATG- - {deb[11]}\n\t-TGO - {deb[12]}\n\tA-GO - {deb[13]}\n\tAT-O - {deb[14]}\nW sumie: {sum(deb)}')
+        else:
+            good += 1
+            dobre['Books'].append({'Autor: '   : sw.get_author(txt),
+                                   'Tytuł: '   : sw.get_title(txt),
+                                   'Gatunek: ' : sw.get_type(txt),
+                                   'Ocena: '   : sw.get_grade(txt),
+                                   'Text: '    : txt
+                                   })
+    all = len(ret['Books'])
+    dw.save_to_JSON(data=zle, file='zle.json')
+    dw.save_to_JSON(data=dobre, file='dobre.json')
+    print(f'Wszystkich: {all}\nWszystkich dobrych: {good}/{good / all * 100:.2f}%\nWszystkich zlych: {count}/{count / all * 100:.2f}%, w tym\n\tAutorow: {aut}\n\tTytulow: {tyt}\n\tGatunkow: {gat}\n\tOcen: {oce}\n\nA dokladnie:\n\tATGO - {deb[0]}\n\tA--- - {deb[1]}\n\t-T-- - {deb[2]}\n\t--G- - {deb[3]}\n\t---O - {deb[4]}\n\tAT-- - {deb[5]}\n\t-TG- - {deb[6]}\n\t-T-O - {deb[7]}\n\tA-G- - {deb[8]}\n\t--GO - {deb[9]}\n\tA--O - {deb[10]}\n\tATG- - {deb[11]}\n\t-TGO - {deb[12]}\n\tA-GO - {deb[13]}\n\tAT-O - {deb[14]}\nW sumie: {sum(deb)}')
     # 546, 542(Autorzy), 130(brak oceny), 67(po ifie i odrzuceniu jakis zapytan), 59(gatunek plus wielkosc liter) textow failuje :c
 
 """
