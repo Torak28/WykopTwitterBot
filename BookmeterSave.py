@@ -208,7 +208,7 @@ if __name__ == "__main__":
     # 546, 542(Autorzy), 130(brak oceny), 67(po ifie i odrzuceniu jakis zapytan), 59(gatunek plus wielkosc liter) textow failuje :c
 
 """
-[ ] Niby spoko ale zupelnie nie zapisuje podwojnych ksiazek. W sensie ze jak np. w jendym wpisie jest wiecej niz jedna ksiazka
+[ ] Niby spoko ale zupelnie nie zapisuje podwojnych ksiazek. W sensie ze jak np. w jendym wpisie jest wiecej niz jedna ksiazka[policzyc wystapienia Autor, Tytul i tak dalej i wybrac najmniejsze i splitowac]
 [ ] Niby spoko ale dobre + zle != wszystkie
 [ ] Niby spoko ale w dobrych czasem nie ma ocen :c
 
